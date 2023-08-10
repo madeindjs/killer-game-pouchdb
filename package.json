@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "pouchdb": "pouchdb-server --port 5984 -d pouchdb-data",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -15,8 +16,13 @@
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
     "next": "13.4.13",
+    "pouchdb": "^8.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "@types/pouchdb": "^6.4.0",
+    "pouchdb-server": "^4.2.0"
   }
 }
