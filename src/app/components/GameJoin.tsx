@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import PouchDB from "pouchdb";
 import { ChangeEventHandler, FormEventHandler, useEffect, useState } from "react";
 
@@ -8,6 +9,8 @@ export default function GameJoin() {
   const [loading, setLoading] = useState(false);
   const [alreadyTaken, setAlreadyTaken] = useState(false);
 
+  const router = useRouter();
+
   const handleGameIdChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     event.preventDefault();
     setGameId(event.target.value);
@@ -15,6 +18,7 @@ export default function GameJoin() {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
+    router.push(`/games/${gameId}`);
   };
 
   async function isPouchDbExists() {
