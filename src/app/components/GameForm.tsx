@@ -1,11 +1,11 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { usePouchDB } from "../../hooks/use-pouchdb";
+import { getPouchDB } from "../../hooks/use-pouchdb";
 import { Game } from "../../models/game";
 
 export default function Game({ id }: { id: string }) {
-  const db = usePouchDB(id);
+  const db = getPouchDB(id);
 
   const [loading, setLoading] = useState(false);
   const [game, setGame] = useState<Game>({ name: "untitled" });
