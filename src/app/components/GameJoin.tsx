@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import PouchDB from "pouchdb";
 import { ChangeEventHandler, FormEventHandler, useEffect, useState } from "react";
+import { GameService } from "../../service/game";
 
 export default function GameJoin() {
   const [gameId, setGameId] = useState("");
@@ -34,7 +34,8 @@ export default function GameJoin() {
 
   useEffect(() => {
     setLoading(true);
-    isPouchDbExists()
+    new GameService(gameId)
+      .exists()
       .then(setAlreadyTaken)
       .finally(() => setLoading(false));
   }, [gameId]);

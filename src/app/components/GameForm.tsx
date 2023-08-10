@@ -3,9 +3,11 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { getPouchDB } from "../../hooks/use-pouchdb";
 import { Game } from "../../models/game";
+import { GameService } from "../../service/game";
 
 export default function Game({ id }: { id: string }) {
   const db = getPouchDB(id);
+  const gameService = new GameService(id);
 
   const [loading, setLoading] = useState(false);
   const [game, setGame] = useState<Game>({ name: "untitled" });
@@ -15,17 +17,11 @@ export default function Game({ id }: { id: string }) {
     setGame({ ...game, name: event.target.value });
   }
 
-  async function saveGame() {
-    const existingGame = await db.get<Game>("game").catch(() => undefined);
-    const isDirty = game.name !== existingGame?.name;
-
-    if (isDirty) db.put({ _id: "game", ...existingGame, name: game.name }, {});
-  }
-
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
-    saveGame()
+    gameService
+      .save(game)
       .catch(console.error)
       .finally(() => setLoading(false));
   }
@@ -39,9 +35,9 @@ export default function Game({ id }: { id: string }) {
   useEffect(() => {
     listenPouchDBChanges();
     setLoading(true);
-    db.get<Game>("game")
-      .then((existingGame) => setGame({ ...game, name: existingGame.name }))
-      .catch()
+    gameService
+      .get()
+      .then((existingGame) => existingGame && setGame({ ...game, name: existingGame.name }))
       .finally(() => setLoading(false));
   }, [id]);
 
