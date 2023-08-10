@@ -1,6 +1,10 @@
 import PouchDB from "pouchdb";
 import { GameInfo, GameInfoDB } from "../models/game";
 
+export enum GamePouchDbId {
+  Info = "info",
+}
+
 export class GameService {
   private db: PouchDB.Database;
 
@@ -24,22 +28,24 @@ export class GameService {
   }
 
   async getInfo(): Promise<GameInfoDB | undefined> {
-    return this.db.get<GameInfo>("game").catch(() => undefined);
+    return this.db.get<GameInfo>(GamePouchDbId.Info).catch(() => undefined);
   }
 
   async saveInfo(game: GameInfo): Promise<GameInfoDB> {
+    const gameDb = { ...game, _id: GamePouchDbId.Info };
+
     const existingGame = await this.getInfo();
 
     if (existingGame === undefined) {
-      const res = await this.db.post<GameInfo>(game);
-      return { _id: "game", ...game, _rev: res.rev };
+      const res = await this.db.put<GameInfo>(gameDb);
+      return { ...gameDb, _rev: res.rev };
     }
 
     const isDirty = game.name !== existingGame?.name;
 
     if (!isDirty) return existingGame;
 
-    const res = await this.db.put<GameInfo>({ ...existingGame, name: game.name });
-    return { _id: "game", ...game, _rev: res.rev };
+    const res = await this.db.put<GameInfo>({ ...existingGame, ...gameDb });
+    return { ...gameDb, _rev: res.rev };
   }
 }
