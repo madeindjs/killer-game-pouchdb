@@ -1,5 +1,5 @@
 import PouchDB from "pouchdb";
-import { Game, GameDB } from "../models/game";
+import { GameInfo, GameInfoDB } from "../models/game";
 
 export class GameService {
   private db: PouchDB.Database;
@@ -23,15 +23,15 @@ export class GameService {
     }
   }
 
-  async get(): Promise<GameDB | undefined> {
-    return this.db.get<Game>("game").catch(() => undefined);
+  async getInfo(): Promise<GameInfoDB | undefined> {
+    return this.db.get<GameInfo>("game").catch(() => undefined);
   }
 
-  async save(game: Game): Promise<GameDB> {
-    const existingGame = await this.get();
+  async saveInfo(game: GameInfo): Promise<GameInfoDB> {
+    const existingGame = await this.getInfo();
 
     if (existingGame === undefined) {
-      const res = await this.db.post<Game>(game);
+      const res = await this.db.post<GameInfo>(game);
       return { _id: "game", ...game, _rev: res.rev };
     }
 
@@ -39,7 +39,7 @@ export class GameService {
 
     if (!isDirty) return existingGame;
 
-    const res = await this.db.put<Game>({ ...existingGame, name: game.name });
+    const res = await this.db.put<GameInfo>({ ...existingGame, name: game.name });
     return { _id: "game", ...game, _rev: res.rev };
   }
 }

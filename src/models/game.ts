@@ -1,5 +1,5 @@
-export interface Game {
+export interface GameInfo {
   name: string;
 }
 
-export type GameDB = PouchDB.Core.Document<Game> & PouchDB.Core.GetMeta;
+export type GameInfoDB = PouchDB.Core.Document<GameInfo> & PouchDB.Core.GetMeta;

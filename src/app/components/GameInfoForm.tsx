@@ -2,7 +2,7 @@
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { getPouchDB } from "../../hooks/use-pouchdb";
-import { Game } from "../../models/game";
+import { GameInfo } from "../../models/game";
 import { GameService } from "../../service/game";
 
 export default function Game({ id }: { id: string }) {
@@ -10,7 +10,7 @@ export default function Game({ id }: { id: string }) {
   const gameService = new GameService(id);
 
   const [loading, setLoading] = useState(false);
-  const [game, setGame] = useState<Game>({ name: "untitled" });
+  const [game, setGame] = useState<GameInfo>({ name: "untitled" });
 
   async function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
     event.preventDefault();
@@ -21,14 +21,14 @@ export default function Game({ id }: { id: string }) {
     event.preventDefault();
     setLoading(true);
     gameService
-      .save(game)
+      .saveInfo(game)
       .catch(console.error)
       .finally(() => setLoading(false));
   }
 
   function listenPouchDBChanges() {
     db.changes({ since: "now", doc_ids: ["game"], live: true, include_docs: true }).on("change", (change) => {
-      setGame(change.doc as unknown as Game);
+      setGame(change.doc as unknown as GameInfo);
     });
   }
 
@@ -36,7 +36,7 @@ export default function Game({ id }: { id: string }) {
     listenPouchDBChanges();
     setLoading(true);
     gameService
-      .get()
+      .getInfo()
       .then((existingGame) => existingGame && setGame({ ...game, name: existingGame.name }))
       .finally(() => setLoading(false));
   }, [id]);
